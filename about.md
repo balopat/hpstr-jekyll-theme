@@ -4,7 +4,7 @@ permalink: /about/
 title: About Refactorium
 tags: [Jekyll, theme, modern, minimal, responsive]
 image:
-  feature: abstract-5.jpg
+  feature: city.jpg
 share: true
 ---
 

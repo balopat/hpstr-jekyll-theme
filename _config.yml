@@ -1,14 +1,15 @@
-title:            Refactorium
-description:      Balint Pato's coding blog
+title:            the refactorium
+description:      I always change my mind.
 disqus_shortname: 
 #Your site's domain goes here. Leave localhost server or blank when working locally.
-url:              http://balopat.github.io
+#url:              http://balopat.github.io
+url:              http://localhost:4000
 
 # Owner/author information
 owner:
   name:           Balint Pato
   avatar:         avatar.jpg
-  bio:            "I don't know yet what am I, but I like to create stuff in super good quality."
+  bio:            "co-founder of Software Craftsmanship New York and Samebug. Musician. New Yorker. Ex-Londoner. Ex-Budapester. Coder Forever."
   email:          
   # Social networking links used in footer. Update and remove as you like.
   twitter:        balopat
@@ -36,6 +37,9 @@ bing_verify:
 links:
   - title: Software Craftsmanship New York
     url: http://www.meetup.com/Software-Craftsmanship-New-York/
+    external: true
+  - title: Samebug
+    url: http://samebug.io
     external: true
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
