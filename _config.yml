@@ -9,13 +9,13 @@ owner:
   name:           Balint Pato
   avatar:         avatar.jpg
   bio:            "I don't know yet what am I, but I like to create stuff in super good quality."
-  email:          patobalint@gmail.com
+  email:          
   # Social networking links used in footer. Update and remove as you like.
-  twitter:  
+  twitter:        balopat
   facebook:       
-  github:         balopat.github.com
-  stackexchange:  
-  linkedin:       
+  github:         balopat
+  stackexchange:  balopat
+  linkedin:       patobalint
   instagram:      
   flickr:         
   tumblr:         
@@ -34,10 +34,8 @@ bing_verify:
 # Links to include in top navigation
 # For external links add external: true
 links:
-  - title: Theme Setup
-    url: /theme-setup
-  - title: External Link
-    url: http://mademistakes.com
+  - title: Software Craftsmanship New York
+    url: http://www.meetup.com/Software-Craftsmanship-New-York/
     external: true
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
