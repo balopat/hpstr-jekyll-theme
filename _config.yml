@@ -41,6 +41,9 @@ links:
   - title: Samebug
     url: http://samebug.io
     external: true
+  - title: CodingBoard
+    url: http://codingboard.org
+    external: true
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    America/New_York
