@@ -1,0 +1,10 @@
+---           
+layout: post
+title: Implicit type conversion for complex numbers in scala
+date: 2012-05-17 20:22:00 UTC
+updated: 2013-12-14 19:44:55 UTC
+comments: false
+categories: scala implicit type conversion complex numbers
+---
+ 
+<p>I am thouroughly amazed by the power of the implicit type conversion in scala. Started to play around with it a few months ago, and now implementing the drills in the<a href="http://www.cambridge.org/gb/knowledge/isbn/item1174708/?site_locale=en_GB" target="_blank"> quantum computing book for computer scientists</a>, just because I can ;)</p><br /><p>Nevertheless, look at this Spec</p><br /><script src="https://gist.github.com/2722395.js?file=ComplexNumberSpec.scala"></script><br /><br/><br/><p>Isn&#39;t it beautiful? It sits inside the language, it looks like <strong>i </strong>is part of it...(if you don&#39;t count the parens but hey, I am a beginner, if anyone has solution to remove those too with some kind of operator precedence magic, then let me know!)</p><br /><p>How did I do it?&#0160;</p><br /><p>Crazy simple:&#0160;</p><br /><script src="https://gist.github.com/2722414.js?file=ComplexNumberRectangular.scala"></script><br />
