@@ -8,5 +8,5 @@ image:
 share: true
 ---
 
-Why *refactorium*? Because I always, always change my mind, so refactoring is a constant part of my coding.
-
+Why *refactorium*? 
+Because I always, always change my mind.
