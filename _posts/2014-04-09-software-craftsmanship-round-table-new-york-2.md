@@ -15,9 +15,13 @@ _Disclaimer_: I am super tired as I am writing this blogpost so it might be that
 We started with **Lightning Talks**
 
 Dan: Stan the statistics programming language
+
 Li-Hsuan: The image of a developer
+
 Rafael: Mentorship & Apprenticeship 
+
 Balint: Handling time in a testable way
+
 
 Then we voted on these **Discussion Topics** 
 
