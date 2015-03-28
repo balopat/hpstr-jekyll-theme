@@ -275,6 +275,10 @@ a {
           transition: all 0.2s ease;
 }
 
+strong {
+  font-weight: bold;
+}
+
 body {
   font-family: 'Lato', Calibri, Arial, sans-serif;
   color: #222222;
@@ -3811,8 +3815,7 @@ body {
 
 @media only screen and (min-width: 62.5em) {
   .header-title h1 {
-    font-size: 60px;
-    font-size: 3.75rem;
+    font-size: 50px;
   }
 }
 
