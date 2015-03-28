@@ -64,7 +64,7 @@ metric_f: 2.5299999713897705>]
 
 #Step 2. Sending email about my own event 
 
-I wanted to send an email about my own field. 
+In the second step I'm going to send an email about my event, and that email's body will contain the value of the "testfield" field on my event. 
 
 The following IRB code submits my event with a field called "testfield" with a value "bla"
 
@@ -76,11 +76,10 @@ irb(main):004:0> r << { testfield: "bla" }
 => nil
 </code></pre>
 
-I wanted to send an email with a subject "test" using my own smtp server with authentication to send the body containing "bla".
+I want to see an email containing "bla".
 
 
-
-## 2.1. Write unit tests for your alerting configuration logic!! 
+## 2.1. Writing tests for my filtering logic
 
 Riemann provides a test framework to test your configuration, I followed <a href="http://riemann.io/howto.html#writing-tests">the guide to write tests</a>.
 After spamming my inbox with loads of messages, and being a TDD enthusiast, I realized that I should point it out first :) 
