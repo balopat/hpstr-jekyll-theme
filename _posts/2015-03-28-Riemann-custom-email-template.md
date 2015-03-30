@@ -39,7 +39,7 @@ Goals: I want to be able to use my event data freely. I want to be able to defin
 
 I went through the  <a href="http://riemann.io/quickstart.html">Riemann quickstart</a> and had the server setup, the test event was working, and this is how it looked like: 
 
-This is a Ruby client using Interactive Ruby (IRB), wh
+I created the Riemann client in Ruby, using Interactive Ruby (IRB), sent the event to Riemann, and retrieved it through a query:
 
 <pre><code>
 $  r << { 
