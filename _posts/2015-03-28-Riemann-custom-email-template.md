@@ -4,7 +4,7 @@ title: A taste of riemann.io with templatized emails
 date: 2015-05-28
 comments: true
 categories: Tech
-tags: [software craftsmanship, agile, persistence]
+tags: [riemann, monitoring, clojure]
 ---
 
 #Riemann is a flexible monitoring/alerting solution
@@ -291,7 +291,7 @@ In order to enable Selmer I just downloaded the jar (I had it in my local maven 
 
 And this is the riemann.config to enable it:
 
-<pre><code>
+<pre><code class="clojure">
 (use 'selmer.parser)
 
 (selmer.parser/set-resource-path! "/Users/balopat/dev/riemann-0.2.9/etc/")

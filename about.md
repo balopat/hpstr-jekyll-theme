@@ -8,5 +8,4 @@ image:
 share: true
 ---
 
-Why *refactorium*? 
-Because I always, always change my mind.
+refactorium, Balint Pato's musings and adventures in the world of software. 
