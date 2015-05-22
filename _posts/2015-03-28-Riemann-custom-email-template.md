@@ -1,7 +1,7 @@
 ---           
 layout: post
 title: A taste of riemann.io with templatized emails
-date: 2015-05-28
+date: 2015-03-28
 comments: true
 categories: Tech
 tags: [riemann, monitoring, clojure]
