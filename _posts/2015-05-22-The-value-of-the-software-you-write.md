@@ -70,7 +70,7 @@ Pricing your services is a key element in the discussion. The basic strategy Wes
 #Summary 
 
 Wes is an energetic, successful guy, who believes in value driven business consultancy and it is definitely worth to keep an eye on him as this approach might get some real traction in the next few years.  
-I really enjoyed the talk he gave and was insipired my curiousity enough to put behind my concerns around the complexities of assessing value and start reading his book to discover more of his thoughts: <a href="https://leanpub.com/commitmenttovalueintechnology">Commitment to Value</a>.
+I really enjoyed the talk he gave and he insipired my curiousity enough to put behind my concerns around the complexities of assessing value and start reading his book to discover more of his thoughts: <a href="https://leanpub.com/commitmenttovalueintechnology">Commitment to Value</a>.
 I do believe that if this is possible in the consulting world, then we can somehow apply the same principles within a company as well and even though these will require massive organizational changes, it is a very rewarding vision to aim for. 
 
 
