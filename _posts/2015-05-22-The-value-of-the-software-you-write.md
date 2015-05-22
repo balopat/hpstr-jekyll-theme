@@ -25,7 +25,7 @@ New York meetup at Thoughtworks with the title <a href="http://www.meetup.com/So
 
 He is very much inspired by the quotes on the church wall across the street from his apartment, where he got the quote for yesterday's talk as well: 
 
-<img src="images/quote.jpg">
+<img src="/images/quote.jpg">
 
 ##Woke up
 
