@@ -65,12 +65,10 @@ Testing can become very challenging in distributed and parallel systems. You hav
 
 Besides the possible state space is exponentially growing with every added component, running actual nodes can become prohibitively expensive. 
 
-//TODO: REVIEW
-Yes, you can cover 90 of the scenarios by thinking about it and writing cleverly mocked/stubbed tests, using generative, property checking testing with quick check. But how about an enlightening design which can actually model and simulate your idea and give you 100 coverage of important state transitions? 
 
 ###The Clean Code example 
 
-Uncle Bob Martin’s Clean Code brings up a very simple example to demonstrate the challenges of testing concurrent code. 
+Uncle Bob Martin’s Clean Code brings up a very simple example to demonstrate the challenges of testing concurrent code. Let me use this simple example to demonstrate the power of model checking. 
 
 <pre><code>
 public class IdGenerator {
@@ -202,3 +200,73 @@ This time, running TLC produces no errors.
 - optimize your distributed system so that you can get more value out of it with more confidence 
 -  simulation of 
 	-  where your bottleneck will be 
+
+
+<pre><code>
+
+------------------------ MODULE IdGeneratorByteCode ------------------------
+
+
+EXTENDS Integers, Sequences,  TLC
+
+CONSTANT  NumberOfProcesses, Locking
+
+(*
+
+--fair algorithm IdGenerator {
+
+  variable  
+  object = [lastId |-> 42, lock |-> 0],    
+  stacks = [ i \in 1..NumberOfProcesses |-> <<>>],
+  returnValue = [i\in 1..NumberOfProcesses |-> -1] 
+  ;
+  
+  define {
+    Last(S) == S[Len(S)]
+    Pop(S) == SubSeq(S, 1, Len(S)-1)
+    AllIsDone ==  (\A i \in 1 .. NumberOfProcesses: pc[i] = "Done")
+    AllstackssAreEmpty ==  (\A i \in 1 .. NumberOfProcesses: stacks[i] = <<>>)
+    IdsAreAllDifferent == (\A i,j \in 1 .. NumberOfProcesses: i#j => returnValue[i] # returnValue[j])
+    IdGeneratorInvariant == AllIsDone => AllstackssAreEmpty /\ IdsAreAllDifferent
+  }
+
+  (* update and read are now one atomic step *)
+  process(id \in 1 .. NumberOfProcesses) {
+   checkLocking: 
+   if (Locking) {
+        waitForLock: await object.lock = 0;
+        lock: object.lock := self;
+   };
+    \* Load _this_ onto the operand stacks 
+    aload0: stacks[self] := Append(stacks[self], object);
+    \* copy the top of the stacks 
+    dup: stacks[self] := Append(stacks[self], Last(stacks[self]));
+    \* retrieve the value of field lastId from the object and store it back on the top of the stacks
+    getfield_lastId: 
+          with (lastId = Last(stacks[self]).lastId) {
+            stacks[self] := Append(Pop(stacks[self]), lastId);
+          };
+    \* push the integer constant 1 on the stacks 
+    iconst_1: stacks[self] := Append(stacks[self], 1);
+     \* integer add the top two values on the top of the stacks
+    iadd: 
+        with (a = Last(stacks[self]), b = Last(Pop(stacks[self]))) {
+            stacks[self] := Append(Pop(Pop(stacks[self])) , a+b);
+        };
+        
+    dup_x1: 
+        stacks[self] := <<Last(stacks[self])>> \o stacks[self];
+     putfield: 
+        object.lastId := Last(stacks[self]);
+        stacks[self] := Pop(Pop(stacks[self])) ;
+     ret: 
+        returnValue[self] := Last(stacks[self]);
+        stacks[self] := Pop(stacks[self]);
+     if (Locking) {        
+        unlock: object.lock := 0;
+     };
+  }
+}*)
+
+
+</code></pre>
