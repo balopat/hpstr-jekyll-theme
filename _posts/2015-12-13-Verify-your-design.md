@@ -234,8 +234,9 @@ CONSTANT  NumberOfProcesses, Locking
   process(id \in 1 .. NumberOfProcesses) {
    checkLocking: 
    if (Locking) {
-        waitForLock: await object.lock = 0;
-        lock: object.lock := self;
+        waitForLock: 
+            await object.lock = 0;
+            object.lock := self;
    };
     \* Load _this_ onto the operand stacks 
     aload0: stacks[self] := Append(stacks[self], object);
