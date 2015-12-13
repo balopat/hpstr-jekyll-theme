@@ -11,7 +11,11 @@ tags: [formal methods, tlaplus, pluscal, messaging, enterprise]
 
 >Dijkstra in 1994 (from wikipedia)
 
-The world of formal methods is evolving fast, and already becoming useful to cutting edge tech companies dealing with complex problems. Testing parallel algorithms or distributed systems is notoriously hard. If you deal with any of these (and there is higher and higher chance that you are), you will want to look at formal methods to have confidence in your design! 
+Testing parallel algorithms or distributed systems is notoriously hard. If you deal with either of them - and there is higher and higher chance that you are already, or will in the future -, you should look at <a href="https://en.wikipedia.org/wiki/Formal_methods">formal methods</a> to have confidence in your design! 
+The world of formal methods is evolving fast, and already becoming useful to cutting edge tech companies dealing with complex problems. 
+
+
+# Formal methods
 
 Formal methods fascinated me since I learned about them at my alma mater, Eotvos Lorand Science University. Unfortunately I never got to use them in practice beyond a voice in the back of my head reminding me time to time while coding that I should articulate the invariant of a class or algorithm. This field was always looked as too impractical for most of the problems we are facing in our day job of software development. 
 
@@ -32,7 +36,7 @@ I believe that **formal methods, especially model checking is slowly going to ma
 1. Distributed and parallel systems require specification
 2. The demand for distributed and parallel systems is growing
 3. Testing these systems is hard 
-4. Working with a verifiable design is cool
+4. Verifiable design is an important addition to tools for making better software
 
 
 ###1. Distributed and parallel systems require specification
@@ -52,7 +56,7 @@ There are a couple of driving forces which causes the everyday developer to meet
 - computers stopped getting faster - we have to horizontally scale our computations, caching, parallel design and functional languages are the king 
 - high availability is getting more and more the norm - it requires removal of SPOFs and hence replication 
 - disaster recovery and business continuity is a crucial piece of every enterprise operational strategy - cross datacenter replication is also a non trivial challenge which requires knowledge in distributed systems 
-- micro services - so you decided to go down this route and have independent, scalable nodes talking to each other? Great, but guess what: your system is distributed by definition. 
+- microservices - so you decided to go down this route and have independent, scalable nodes talking to each other? Great, but guess what: your system is distributed by definition. 
 
 As more and more demand will build up for distributed and parallel systems, we will need expertise and tooling to deal with the complexity it brings.
 
@@ -200,7 +204,7 @@ This time, running TLC produces no errors.
 
 ###4. Working with a verifiable design is cool
 
-Anytime I show TLA+, TLC and Toolbox to a developer, they get excited about it, insipired by the thought of a verified design, they start thinking about potential usages. I believe that these are not isolated cases and many programmers will be insipired to at least give it a go, or even go further and better the world of model checking and verification, and make it more approachable, more user friendly.
+Anytime I show TLA+, TLC and Toolbox to developers, they get excited about it, insipired by the thought of a verified design, they start thinking about potential usages. I believe that these are not isolated cases and many programmers will be insipired to at least give it a go, or even go further and better the world of model checking and verification, and make it more approachable, more user friendly.
 
 There are many more model checking tools out there, including Alloy, SPIN, PAT, MALPAS, UPPAAL which I know nothing about yet, but excited to have a look and check them out. 
 
@@ -209,6 +213,12 @@ The world is running on software. Having safer, well designed systems is more an
 
 *Appendix: For the adventurous, the 8 step model of the IdGenerator in PlusCal:*
 
+<div id="tabs-bytecode">
+  <ul>
+    <li><a href="#tabs-bytecode-pluscal">PlusCal</a></li>
+    <li><a href="#tabs-bytecode-pdf">PDF</a></li>
+  </ul>
+  <div id="tabs-bytecode-pluscal">
 <pre><code>------------------------ MODULE IdGeneratorByteCode ------------------------
 
 EXTENDS Integers, Sequences,  TLC
@@ -275,3 +285,6 @@ CONSTANT  NumberOfProcesses, Locking
   }
 }*)
 </code></pre>
+</div>
+<div id="tabs-bytecode-pdf"><img src="{{site.url}}/images/IdGeneratorByteCode-1.png"/> <img src="{{site.url}}/images/IdGeneratorByteCode-2.png"/></div>
+</idv>
