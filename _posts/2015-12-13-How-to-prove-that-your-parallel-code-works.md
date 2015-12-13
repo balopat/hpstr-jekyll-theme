@@ -200,7 +200,9 @@ By removing the second label, we are telling TLC that the *updateAndRead* label 
 
 > The IdGenerator PlusCal specification fixed version
 
-This time, running TLC produces no errors. 
+This time, running TLC produces no errors. What does it mean? It means that - as long as the representation is relevant to our problem, the invariant and the solution - the specified design exhibits the desired behaviour in the selected models. 
+
+This is big. Even though it leaves us with the responsibility to get the representations right, it's still big: we know that our design is correct.  
 
 ###4. Working with a verifiable design is cool
 
