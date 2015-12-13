@@ -3,8 +3,8 @@ description:      Balint Pato's software blog
 disqus_shortname: refactorium
 #Your site's domain goes here. Leave localhost server or blank when working locally.
 #url:              http://balopat.github.io
-#url:              http://www.refactorium.com
-url:              http://localhost:4000
+url:              http://www.refactorium.com
+#url:              http://localhost:4000
 
 # Owner/author information
 owner:
