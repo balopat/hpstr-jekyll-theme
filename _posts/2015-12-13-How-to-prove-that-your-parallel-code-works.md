@@ -11,7 +11,7 @@ tags: [formal methods, tlaplus, pluscal, messaging, enterprise, modelchecking, t
 
 >Dijkstra in 1994 (from wikipedia)
 
-Testing parallel algorithms or distributed systems is notoriously hard. If you deal with either of them - and there is higher and higher chance that you are already, or will in the future -, you should look at <a href="https://en.wikipedia.org/wiki/Formal_methods">formal methods</a> to have confidence in your design! 
+Testing parallel algorithms or distributed systems is notoriously hard. If you deal with either of them - and there is higher and higher chance that you are already, or will in the future - then you should look at <a href="https://en.wikipedia.org/wiki/Formal_methods">formal methods</a> to have confidence in your design! 
 The world of formal methods is evolving fast, and already becoming useful to cutting edge tech companies dealing with complex problems. 
 
 
@@ -21,7 +21,7 @@ Formal methods fascinated me since I learned about them at my alma mater, Eotvos
 
 Formal specification, verification and the lightweight model checking are typically based on the likes of first order or higher order logic and some branch of math like set theory (ZFC). Formal logic and math are definitely something most programmers don't use (yet) in their daily work - it's coming from and used mostly by the academia, all the real life implementations, like prolog, suffer from performance problems. On the other hand, tools around formal verification and model checking are getting much better, and already becoming useful to cutting edge tech companies dealing with complex problems. 
 
-Wikipedia puts model checking the lightweight branch of formal methods - and for a right reason. If you want to have a program formally verified, you have to construct correct mathematical proofs around your formal specification which - despite the tools and available automations are getting better in this space as well - still can be complex, expensive and hard to validate. <a href="https://en.wikipedia.org/wiki/Model_checking">Model checking</a> on the other hand checks a formally specified *model* of an algorithm against limited sections of the state space - keeping it focused, and much more approachable, even so that I could start to comprehend and use it as a software developer.
+Wikipedia puts model checking the lightweight branch of formal methods - and for a right reason. <a href="https://en.wikipedia.org/wiki/Model_checking">Model checking</a> is much easier to use compared to creating mathematically correct proofs. As long as you can formally specify a *model* of your algorithm and you can formulate safety properties, you are good to go: the model checker tools will test them in your chosen, limited sections of the state space - keeping it focused, and much more approachable. Even me, a simple software developer can understand it and start to play around with it.
 
 
 ##Amazon is using TLA+ 
