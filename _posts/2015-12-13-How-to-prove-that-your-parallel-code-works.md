@@ -3,8 +3,8 @@ layout: post
 title: How to prove that your parallel code works?
 date: 2015-12-13
 comments: true
-categories: Distributed_Systems Parallel_Computing tlaplus Formal_Methods
-tags: [formal methods, tlaplus, pluscal, messaging, enterprise]
+categories: Distributed_Systems Parallel_Computing tlaplus Formal_Methods Model_checking
+tags: [formal methods, tlaplus, pluscal, messaging, enterprise, modelchecking, tlc]
 ---
 
 <img src="{{site.url}}/images/Edsger_Dijkstra_1994.jpg"/>
