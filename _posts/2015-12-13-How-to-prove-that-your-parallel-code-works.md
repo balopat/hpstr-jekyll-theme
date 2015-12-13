@@ -219,6 +219,7 @@ The world is running on software. Having safer, well designed systems is more an
   <ul>
     <li><a href="#tabs-bytecode-pluscal">PlusCal</a></li>
     <li><a href="#tabs-bytecode-pdf">PDF</a></li>
+    <li><a href="#tabs-bytecode-bc">bytecode</a></li>
   </ul>
   <div id="tabs-bytecode-pluscal">
 <pre><code>------------------------ MODULE IdGeneratorByteCode ------------------------
@@ -290,3 +291,19 @@ CONSTANT  NumberOfProcesses, Locking
 </div>
 <div id="tabs-bytecode-pdf"><img src="{{site.url}}/images/IdGeneratorByteCode-1.png"/> <img src="{{site.url}}/images/IdGeneratorByteCode-2.png"/></div>
 </idv>
+<div id="tabs-bytecode-bc"><pre><code>  public generateNextId()I
+   L0
+    LINENUMBER 5 L0
+    ALOAD 0
+    DUP
+    GETFIELD IdGenerator.lastUsedId : I
+    ICONST_1
+    IADD
+    DUP_X1
+    PUTFIELD IdGenerator.lastUsedId : I
+    IRETURN
+   L1
+    LOCALVARIABLE this LIdGenerator; L0 L1 0
+    MAXSTACK = 3
+    MAXLOCALS = 1
+    </code></pre>
