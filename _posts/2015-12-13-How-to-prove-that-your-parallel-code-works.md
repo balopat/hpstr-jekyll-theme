@@ -107,7 +107,7 @@ For the sake of simplicity I chose to represent this with two atomic steps in ou
     <li><a href="#tabs-2">PDF</a></li>
   </ul>
   <div id="tabs-1">
-<pre><code>------ MODULE IdGenerator -----------
+<pre><code class="pluscal-c">------ MODULE IdGenerator -----------
 
 EXTENDS Integers, TLC 
 CONSTANT NumberOfProcesses
@@ -222,7 +222,7 @@ The world is running on software. Having safer, well designed systems is more an
     <li><a href="#tabs-bytecode-bc">bytecode</a></li>
   </ul>
   <div id="tabs-bytecode-pluscal">
-<pre><code>------------------------ MODULE IdGeneratorByteCode ------------------------
+<pre><code class="pluscal-c" >------------------------ MODULE IdGeneratorByteCode ------------------------
 
 EXTENDS Integers, Sequences,  TLC
 
