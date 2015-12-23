@@ -7,7 +7,7 @@ categories: Distributed_Systems
 tags: [jepsen, influxdb, distributed systems, testing, consistency models]
 ---
 
-Before the holidays (2 days) I promised myself and my wife that I won’t code during the holidays. So I won’t. However, I’m setting up an environment for January on my Mac so they will wait for me when I come back for my next train #CommuteProject: a Jepsen test for InfluxDB! 
+Before the holidays I promised myself and my wife that I won’t code during the holidays (starting tomorrow). So I won’t. However, I’m setting up an environment for January on my Mac so they will wait for me when I come back for my next train #CommuteProject: a Jepsen test for InfluxDB! 
 
 My motivation is that I'm genuinely curious in both technologies, I work with InfluxDB at work, and learned so much from the Jepsen articles, that I wanted to try it out. 
 
