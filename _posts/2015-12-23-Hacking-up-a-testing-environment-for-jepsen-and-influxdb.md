@@ -594,7 +594,7 @@ The locking mechanism runs on a deadlock sometime...one thread seems to be Threa
 - The real test:) - I'll have to write a client, generators and checkers for InfluxDB, to check whether linearizability holds for all sorts of operations in the presence of network failures created by with nemesis.
 
 
-#See you in 2016!
+## See you in 2016!
 
 
 I hope this hacking log is useful for anyone who tries to run Jepsen, and/or is experimenting with clustering InfluxDB 0.9.6.1. Comments are welcome! 
