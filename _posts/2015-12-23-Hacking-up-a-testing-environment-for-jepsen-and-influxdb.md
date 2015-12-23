@@ -533,8 +533,8 @@ The snippet below
 Questions I have for aphyr:
 
 - is using claypool a bad idea? if not, I'll raise a clean pull request for jepsen.
-- have you ran into clj-ssh issues before? any ideas why that could be? 
-- what does systemd exactly break?
+- have you ran into clj-ssh issues before? any ideas why the locking issue could be? (see below)
+- what does "fucking" systemd exactly break? :)
 
 Question I have for InfluxDB: 
 
@@ -594,13 +594,14 @@ The locking mechanism runs on a deadlock sometime...one thread seems to be Threa
 - The real test:) - I'll have to write a client, generators and checkers for InfluxDB, to check whether linearizability holds for all sorts of operations in the presence of network failures created by with nemesis.
 
 
-
+#See you in 2016!
 
 
 I hope this hacking log is useful for anyone who tries to run Jepsen, and/or is experimenting with clustering InfluxDB 0.9.6.1. Comments are welcome! 
 
 Now, I will lay back, and enjoy 10 days of touching no code! 
 
+Happy Holidays! 
 
 
 
