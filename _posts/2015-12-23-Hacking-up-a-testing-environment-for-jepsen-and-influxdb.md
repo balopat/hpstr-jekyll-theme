@@ -437,6 +437,7 @@ However, on node four and five influxdb was dead because of this log message:
 
 `run: open server: open meta store: too many peers; influxdb v0.9.0 is limited to 3 nodes in a cluster`
 
+I removed the two extra nodes and continued the testing with three nodes. Sigh. All that time spent on getting five worker threads!! 
 
 ### 3.4 The node order changes from test run to test run
 
