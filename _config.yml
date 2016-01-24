@@ -57,7 +57,10 @@ markdown:    kramdown
 permalink:   /:categories/:title/
 
 # Amount of post to show on home page
-paginate: 5
+paginate: 3
+
+gems:
+  - jekyll-feed
 
 kramdown:
   auto_ids: true
