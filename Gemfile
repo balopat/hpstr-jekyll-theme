@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'jekyll', '2.5.3'
+gem 'jekyll', '2.5.3', :git => 'https://github.com/mattr-/jekyll.git', :branch => 'jekyll-4011'
 gem 'jekyll-sitemap'
 gem 'octopress', '~> 3.0'
 gem 'kramdown'
