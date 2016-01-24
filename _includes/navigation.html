@@ -51,5 +51,8 @@
 			</ul>
 		</li>
 		{% for link in site.links %}<li>{% if link.external %}<a href="{{ link.url }}">{{ link.title }}</a>{% else %}<a href="{{ site.url }}{{ link.url }}">{{ link.title }}</a>{% endif %}</li>{% endfor %}
+		<li> 
+			<a href="/feed.xml"><img src="{{ site.url }}/images/feed-icon-14x14.png"/> Subscribe</a>
+		</li>
 	</ul><!-- /.dl-menu -->
 </nav><!-- /.dl-menuwrapper -->
