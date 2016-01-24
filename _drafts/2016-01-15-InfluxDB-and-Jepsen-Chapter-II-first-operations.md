@@ -23,14 +23,13 @@ the db object, not the test. Just use a let binding; reify closes over lexical s
 
 OK.
 
-
-  recur works to method heads The method bodies of reify are lexical
-  closures, and can refer to the surrounding local scope:
+<pre><code class="clojure">  ;The method bodies of reify are lexical
+  ;closures, and can refer to the surrounding local scope:
   
   (str (let [f "foo"] 
        (reify Object 
          (toString [this] f))))
-  == "foo"
+  == "foo"</code></pre>
 
 So it was pretty simple, just to put let around my db object and voila, it works! 
 
@@ -38,7 +37,7 @@ So it was pretty simple, just to put let around my db object and voila, it works
 
 Failing r w mix, maybe due to consistency=one?
 
-<--- HTTP 204 http://n2:8086/write?u=root&p=root&db=jepsen&rp=default&precision=n&consistency=one (18ms)
+<pre><code class="text"><--- HTTP 204 http://n2:8086/write?u=root&p=root&db=jepsen&rp=default&precision=n&consistency=one (18ms)
 Content-Encoding: gzip
 Request-Id: c8fb8be0-b3d7-11e5-8018-000000000000
 X-Influxdb-Version: 0.9.6.1
@@ -56,13 +55,13 @@ INFO  jepsen.util - 2	:invoke	:write	4
 Content-Type: text/plain
 Content-Length: 21
 answers answer=4.0 1
+</code></pre>
 
 
 Then...weird assertion error:
 
 
-
-java.util.concurrent.ExecutionException: java.lang.AssertionError: Assert failed: i
+<pre><code class="clojure">java.util.concurrent.ExecutionException: java.lang.AssertionError: Assert failed: i
  at java.util.concurrent.FutureTask.report (FutureTask.java:122)
     java.util.concurrent.FutureTask.get (FutureTask.java:192)
     clojure.core$deref_future.invoke (core.clj:2186)
@@ -147,11 +146,112 @@ Caused by: java.lang.AssertionError: Assert failed: i
     java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1142)
     java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:617)
     java.lang.Thread.run (Thread.java:745)
+</code></pre>
 
 
  Then weird error write 3 read 3.0 illegal? (svg)
 
 Then (double cast) it:
+
+
+
+
+....
+
+same error came up in a very obscure way in knossos:
+
+lein test knossos.linear.report-test
+analyis: {:valid? false, :configs ({:model #knossos.model.CASRegister{:value 42}, :pending [{:process 0, :type :invoke, :f :read, :value 42.0, :index 0}]}), :final-paths #{[{:op nil, :model #knossos.model.CASRegister{:value 42}} {:op {:process 0, :type :ok, :f :read, :value 42.0, :index 1}, :model #knossos.model.Inconsistent{:msg can't read 42.0 from register 42}}]}, :previous-ok nil, :op {:process 0, :type :ok, :f :read, :value 42.0, :index 1}} 
+hello:  :index nil 
+ (nil {:process 0, :type :ok, :f :read, :value 42.0, :index 1})
+lein test :only knossos.linear.report-test/bad-analysis-test-3
+
+But --- this was after I opened a ticket 
+
+
+
+run: open server: open meta store: raft: new raft: Leader lease timeout cannot be larger than heartbeat timeout
+
+
+For data it is AP: 
+
+If you choose consistency level ALL, then your write will fail, and it will succeed, which is a bit confusing, you'll get a timeout error, but you don't have any information about that the write actually succeeded to the local shard.  
+If you choose consistency level ANY, then your write will succeed, but the history won't be linearizable. 
+
+How available is AP? 
+
+1. with consistency level ALL your writes will wait until "shard-timemout"
+2. ideally the shard groups are in the CP cluster, so even if the consistency level is ANY, the write should time out after a while (?) or just wait --- it depends on the timestamp I guess whether it needs a new shard or not
+
+> show shards
+name: jepsen
+------------
+id	database	retention_policy	shard_group	start_time	end_time		expiry_time		owners
+1	jepsen		default			1		1969-12-29T00:00:00Z	1970-01-05T00:00:00Z	1970-01-05T00:00:00Z	1,2,3
+
+
+So if I insert another one for today, we'll get another shard: 
+
+root@n3:~# curl -i -XPOST 'http://localhost:8086/write?db=jepsen' --data-binary 'answers value=83 1453382821000000000'
+HTTP/1.1 204 No Content
+Request-Id: e7faae32-c042-11e5-802d-000000000000
+X-Influxdb-Version: 0.9.6.1
+Date: Thu, 21 Jan 2016 13:28:49 GMT
+
+root@n3:~# influx
+Visit https://enterprise.influxdata.com to register for updates, InfluxDB server management, and monitoring.
+Connected to http://localhost:8086 version 0.9.6.1
+InfluxDB shell 0.9.6.1
+> show shards
+name: jepsen
+------------
+id	database	retention_policy	shard_group	start_time		end_time		expiry_time		owners
+1	jepsen		default			1		1969-12-29T00:00:00Z	1970-01-05T00:00:00Z	1970-01-05T00:00:00Z	1,2,3
+5	jepsen		default			3		2016-01-18T00:00:00Z	2016-01-25T00:00:00Z	2016-01-25T00:00:00Z	2,3,1
+
+Meaning, that if my random data is going to be 
+
+
+
+Sometimes: 
+
+
+Error at Setup:  #error {
+ :cause {"error":"metastore database error: error fetching meta data: no leader detected during fetchMetaData"}
+
+ :via
+ [{:type java.lang.RuntimeException
+   :message {"error":"metastore database error: error fetching meta data: no leader detected during fetchMetaData"}
+
+   :at [org.influxdb.impl.InfluxDBErrorHandler handleError InfluxDBErrorHandler.java 19]}]
+ :trace
+ [[org.influxdb.impl.InfluxDBErrorHandler handleError InfluxDBErrorHandler.java 19]
+  [retrofit.RestAdapter$RestHandler invoke RestAdapter.java 242]
+  [org.influxdb.impl.$Proxy0 writePoints nil -1]
+  [org.influxdb.impl.InfluxDBImpl write InfluxDBImpl.java 161]
+  [org.influxdb.impl.BatchProcessor write BatchProcessor.java 166]
+  [org.influxdb.impl.BatchProcessor put BatchProcessor.java 179]
+  [org.influxdb.impl.InfluxDBImpl write InfluxDBImpl.java 147]
+  [sun.reflect.NativeMethodAccessorImpl invoke0 NativeMethodAccessorImpl.java -2]
+  [sun.reflect.NativeMethodAccessorImpl invoke NativeMethodAccessorImpl.java 62]
+  [sun.reflect.DelegatingMethodAccessorImpl invoke DelegatingMethodAccessorImpl.java 43]
+  [java.lang.reflect.Method invoke Method.java 497]
+  [clojure.lang.Reflector invokeMatchingMethod Reflector.java 93]
+  [clojure.lang.Reflector invokeInstanceMethod Reflector.java 28]
+  [jepsen.influxdb$db$reify__7310 setup_BANG_ influxdb.clj 237]
+  [jepsen.db$cycle_BANG_ invoke db.clj 25]
+  [clojure.core$partial$fn__4527 invoke core.clj 2494]
+  [jepsen.core$on_nodes$fn__6710 invoke core.clj 86]
+  [clojure.core$pmap$fn__6744$fn__6745 invoke core.clj 6729]
+  [clojure.core$binding_conveyor_fn$fn__4444 invoke core.clj 1916]
+  [clojure.lang.AFn call AFn.java 18]
+  [java.util.concurrent.FutureTask run FutureTask.java 266]
+  [java.util.concurrent.ThreadPoolExecutor runWorker ThreadPoolExecutor.java 1142]
+  [java.util.concurrent.ThreadPoolExecutor$Worker run ThreadPoolExecutor.java 617]
+  [java.lang.Thread run Thread.java 745]]}
+
+
+
 
 
 
