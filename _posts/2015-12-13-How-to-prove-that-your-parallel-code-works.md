@@ -7,12 +7,14 @@ categories: Formal_Methods
 tags: [formal methods, tlaplus, pluscal, messaging, enterprise, modelchecking, tlc]
 ---
 
+
+Testing parallel algorithms or distributed systems is notoriously hard. If you deal with either of them - and there is higher and higher chance that you are already, or will in the future - then you should look at <a href="https://en.wikipedia.org/wiki/Formal_methods">formal methods</a> to have confidence in your design! 
+The world of formal methods is evolving fast, and already becoming useful for cutting edge tech companies dealing with complex problems. 
+
 <img src="{{site.url}}/images/Edsger_Dijkstra_1994.jpg"/>
 
 >Dijkstra in 1994 (from wikipedia)
 
-Testing parallel algorithms or distributed systems is notoriously hard. If you deal with either of them - and there is higher and higher chance that you are already, or will in the future - then you should look at <a href="https://en.wikipedia.org/wiki/Formal_methods">formal methods</a> to have confidence in your design! 
-The world of formal methods is evolving fast, and already becoming useful for cutting edge tech companies dealing with complex problems. 
 
 
 # Formal methods

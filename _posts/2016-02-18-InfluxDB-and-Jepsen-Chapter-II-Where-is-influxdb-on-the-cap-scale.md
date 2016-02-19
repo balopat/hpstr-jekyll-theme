@@ -1,6 +1,7 @@
 ---           
 layout: post
 title: Jepsen and InfluxDB, Chapter II. Where is InfluxDB on the CAP scale?
+date: 2016-02-18
 comments: true
 categories: Distributed_Systems
 tags: [jepsen, influxdb, distributed systems, testing, consistency models]
@@ -8,14 +9,11 @@ tags: [jepsen, influxdb, distributed systems, testing, consistency models]
 
 This is a continuation of [the hacking to get Jepsen work with InfluxDB](/distributed_systems/Hacking-up-a-testing-environment-for-jepsen-and-influxdb/). I'm reviewing both technologies at the same time and logging it on my blog in the hope that readers will learn from it, that both Kyle Kingsbury and InfluxData will benefit from my feedback, if not other than one of the many feedbacks that they have produced products that are great - and lastly that I'll manage to organize my experimentation around a memorable narrative. 
 
-TODO Kyle is always super responsive which I really appreciate.
-
-
 # 1. The journey towards an almost stable Jepsen/InfluxDB environment 
 
 This section is all about fixing my Jepsen environment for InfluxDB, and getting to a stage where it's usable for exploring InfluxDB's behavior. If you're not interested in these gory details, just want to learn about InfluxDB, please go ahead and skip to [Is InfluxDB CP or AP?](#is-influxdb-ap-or-cp)
 
-## Solving the hung SSH issue
+## 1.1 Solving the hung SSH issue
 
 In [my first post in this series](/distributed_systems/Hacking-up-a-testing-environment-for-jepsen-and-influxdb#whats-next) I struggled with the clj-ssh: The locking mechanism ran into a deadlock sometime...one thread seemed to be Thread.sleeping in clj-ssh library while the others are waiting on that thread to release the lock. Why locking? Please read the first post, for a bit more details, but essentially, in order to cluster InfluxDB 0.9.6.1, you'll have to know the startup order upfront and configure the nodes that way, or orchestrate synchronization across the nodes with locking so you know who started first, second and third. 
 
@@ -80,7 +78,7 @@ But - given the fact that I'm _already_ logging in as root, this should not chan
 
 If you, my dear reader have any solution to this, please let me know, it is driving me crazy! Thanks! 
 
-## Solving the serialization issue
+## 1.2 Solving the serialization issue
 
 The next problem was serialization error when the tests finished. It was resulting from my decision to store the state with regards to the order of nodes in the test itself. Kyle responded on Twitter to this problem: 
 
@@ -103,101 +101,22 @@ But...the best description I found was on the [Practical Elegance blog](http://d
 
 With my upgraded understanding it was much simpler, I just had to put the let expression around my db object and voila, it worked! 
 
-
-## 1.2 InfluxDB issues close to startup  
-
-These issues still haunt me. Sometimes, when the cluster was just created, InfluxDB gets into weird states. 
-
-
-Sometimes: 
-
-<pre><code class="clojure">
-Error at Setup:  #error {
- :cause {"error":"metastore database error: error fetching meta data: no leader detected during fetchMetaData"}
-
- :via
- [{:type java.lang.RuntimeException
-   :message {"error":"metastore database error: error fetching meta data: no leader detected during fetchMetaData"}
-
-   :at [org.influxdb.impl.InfluxDBErrorHandler handleError InfluxDBErrorHandler.java 19]}]
- :trace
- [[org.influxdb.impl.InfluxDBErrorHandler handleError InfluxDBErrorHandler.java 19]
-  [retrofit.RestAdapter$RestHandler invoke RestAdapter.java 242]
-  [org.influxdb.impl.$Proxy0 writePoints nil -1]
-  [org.influxdb.impl.InfluxDBImpl write InfluxDBImpl.java 161]
-  [org.influxdb.impl.BatchProcessor write BatchProcessor.java 166]
-  [org.influxdb.impl.BatchProcessor put BatchProcessor.java 179]
-  [org.influxdb.impl.InfluxDBImpl write InfluxDBImpl.java 147]
-  [sun.reflect.NativeMethodAccessorImpl invoke0 NativeMethodAccessorImpl.java -2]
-  [sun.reflect.NativeMethodAccessorImpl invoke NativeMethodAccessorImpl.java 62]
-  [sun.reflect.DelegatingMethodAccessorImpl invoke DelegatingMethodAccessorImpl.java 43]
-  [java.lang.reflect.Method invoke Method.java 497]
-  [clojure.lang.Reflector invokeMatchingMethod Reflector.java 93]
-  [clojure.lang.Reflector invokeInstanceMethod Reflector.java 28]
-  [jepsen.influxdb$db$reify__7310 setup_BANG_ influxdb.clj 237]
-  [jepsen.db$cycle_BANG_ invoke db.clj 25]
-  [clojure.core$partial$fn__4527 invoke core.clj 2494]
-  [jepsen.core$on_nodes$fn__6710 invoke core.clj 86]
-  [clojure.core$pmap$fn__6744$fn__6745 invoke core.clj 6729]
-  [clojure.core$binding_conveyor_fn$fn__4444 invoke core.clj 1916]
-  [clojure.lang.AFn call AFn.java 18]
-  [java.util.concurrent.FutureTask run FutureTask.java 266]
-  [java.util.concurrent.ThreadPoolExecutor runWorker ThreadPoolExecutor.java 1142]
-  [java.util.concurrent.ThreadPoolExecutor$Worker run ThreadPoolExecutor.java 617]
-  [java.lang.Thread run Thread.java 745]]}
-</code></pre>
-
-
-This happens when WAL is not started yet for DB: 
-<pre><code class="">
-java.lang.RuntimeException: {"error":"retention policy not found: default"}
-
- at org.influxdb.impl.InfluxDBErrorHandler.handleError (InfluxDBErrorHandler.java:19)
-    retrofit.RestAdapter$RestHandler.invoke (RestAdapter.java:242)
-    org.influxdb.impl.$Proxy0.writePoints (:-1)
-    org.influxdb.impl.InfluxDBImpl.write (InfluxDBImpl.java:161)
-    org.influxdb.impl.BatchProcessor.write (BatchProcessor.java:166)
-    org.influxdb.impl.BatchProcessor.put (BatchProcessor.java:179)
-    org.influxdb.impl.InfluxDBImpl.write (InfluxDBImpl.java:147)
-    sun.reflect.NativeMethodAccessorImpl.invoke0 (NativeMethodAccessorImpl.java:-2)
-    sun.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:62)
-    sun.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)
-    java.lang.reflect.Method.invoke (Method.java:497)
-    clojure.lang.Reflector.invokeMatchingMethod (Reflector.java:93)
-    clojure.lang.Reflector.invokeInstanceMethod (Reflector.java:28)
-    jepsen.influxdb$db$reify__7310.setup_BANG_ (influxdb.clj:237)
-    jepsen.db$cycle_BANG_.invoke (db.clj:25)
-    clojure.core$partial$fn__4527.invoke (core.clj:2494)
-    jepsen.core$on_nodes$fn__6710.invoke (core.clj:86)
-    clojure.core$pmap$fn__6744$fn__6745.invoke (core.clj:6729)
-    clojure.core$binding_conveyor_fn$fn__4444.invoke (core.clj:1916)
-    clojure.lang.AFn.call (AFn.java:18)
-    java.util.concurrent.FutureTask.run (FutureTask.java:266)
-    java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1142)
-    java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:617)
-    java.lang.Thread.run (Thread.java:745)
-</code></pre>
-
-
-
 # 2. Is InfluxDB AP or CP?
 
-An interesting characteristic of InfluxDB is that the design is in its early stages hence constantly in flux (pun intended). Hopefully, as the product matures things will start to stabilitze. I admire the courage of the company to be bold enough to go through 3 raft implementations and 3 storage engines since they open sourced the project! Even though this does alienate some early adopters, it seems to be the necessary evil if you invent better and better solutions. Also they are getting better at backward compatibility and providing migraton paths - although nothing is promised yet! Clustering is in beta now (Feb 2016, from 0.10).
+InfluxDB's design is in its early stage and still constantly in flux (pun intended). 
+Hopefully, as the product matures things will start to stabilize. I admire the courage of the company to be bold enough to go through three raft implementations and three storage engines since they started the project! Even though this might alienate some early adopters, it seems to be the necessary evil if they can invent better and better solutions. Also they are getting better at backward compatibility and providing migraton paths - although nothing is promised yet, they reserve their rights to break things! Clustering is in beta now (Feb 2016, from 0.10).
 
-Just since I started this second blogpost, compared to 0.9.6.1 clustering 0.10 has significant changes. 
-The introduction of Meta Nodes and Data Nodes as an explicit concept wasn't there and the order of nodes doesn't matter anymore as long as there is one first node who everybody joins. 
+Just since I started working on the experiments for this second blogpost in early January, a new version came out. Clustering design in 0.9.6.1 compared to v0.10 has significant changes. The introduction of Meta Nodes and Data Nodes as an explicit concept wasn't there and the order of nodes doesn't matter anymore as long as there is one first node who everybody joins. Let's see how the safety is with InfluxDB finally! 
 
 ## 2.1. "What does the docs say?"
 
-Kyle Kingbury's "Call me maybe" articles are mostly about findings of discrepancies between the documentation of a database/distributed system and it's actual behaviour under the presence of network partitions. It's a fantastic series of articles, and if you haven't read them, please do: [https://aphyr.com/tags/jepsen](https://aphyr.com/tags/jepsen). 
+Kyle Kingbury's "Call me maybe" (just recently renamed to jepsen tests...) articles are mostly about findings of discrepancies between the documentation of a database/distributed system and it's actual behaviour under the presence of network partitions. It's a fantastic series of articles, and if you haven't read them, please do: [https://aphyr.com/tags/jepsen](https://aphyr.com/tags/jepsen). 
 
-
-Let's see what documentation we can find about InfluxDB! InfluxDB's documentation follows an interesting model: first Paul Dix blogs about the design ideas in detail. Then the documentaton links the blogpost. Then slowly they start to migrate the ideas over from the blogpost into the structured documentation. 
-
+Inspired by the "do they walk the talk?" approach of jepsen tests, let's see what documentation we can find about InfluxDB! InfluxDB's documentation follows an interesting model: first Paul Dix blogs about the design ideas in detail. Then the documentaton links the blogpost. Then slowly they start to migrate the ideas over from the blogpost into the structured documentation. 
 
 Thus, the base of my Jepsen testing was a blogpost - Paul Dix's (InfluxData CEO) June 2015 [InfluxDB Clustering - Neither strictly CP or AP](https://influxdata.com/blog/influxdb-clustering-design-neither-strictly-cp-or-ap/) and his [latest post on the 0.10 release](https://influxdata.com/blog/announcing-influxdb-v0-10-100000s-writes-per-second-better-compression/).
 
-## 2.2. Choose your hats, gentlemen!  
+## 2.2. Metadata Nodes and Data Nodes
 
 There are basically two separate clusters in InfluxDB, but you can choose nodes to play two roles at the same time. 
 
@@ -222,26 +141,47 @@ What decides whether a node is a data node?
 - it has to have unique bind address across the cluster for the [http] section - I ran into this one during experimentation, left http.bind-andress localhost:8086 and then only one data node is created, the first one to start up! 
 
 
-## 2.3. Data Nodes consistency model
+## 2.3. Data Nodes write consistency model
 
-> "We favor accepting writes and reads over strong consistency." /Paul Dix/
+One of the requirements in InfluxDB's design is availability: 
 
-The only way to read data from Data Nodes is to read from the node which you are connected to. 
+> "...for the read and write path, favor an AP design. Time series are constantly moving and we rarely need a fully consistent view of the most recent data." /Paul Dix/
 
-> "The initial versions of clustering will check a single server that has a copy for each shard, making the effective consistency level ONE. Later versions will enable tunable levels of consistency." /Paul Dix/
+Not exactly the original use case for Jepsen - as it checks consistency (linearizability) - but we can still use it to double check these statements! 
 
-Interesting! Not exactly the original use case for Jepsen - as it checks linearizability - but we can use it to double check the statements.
 
+Let me pull an exact quote from Paul Dix's blog to show what they have there explaining the expected behaviour when we write data on a node (1) into a shard which is owned across multiple nodes (1, 2, 3, 4).
+
+<blockquote>
+
+<img src="{{ site.url }}/images/write_3_owners.png"/>
+
+<p>What happens next depends on the requested consistency level of the write operation. The different levels are:</p>
+
+<ul>
+<li> <b>Any</b> – succeed if any of the servers that owns the data accept the write or once the receiving server (1 in our example) writes the data as a durable hinted handoff (more on this later)</li>
+<li> <b>One</b>  – succeed once one of the servers that owns the data (2, 3, 4) responds with success</li>
+<li> <b>Quorum</b>  – succeed when n/2 + 1 servers accept the write where n is the number of servers that have a copy of the shard</li>
+<li> <b>All</b>  – succeed when all servers (2, 3, 4) accept the write</li>
+</ul>
+
+Requests to write the data are made in parallel and success is returned to the client when the requested level is hit. 
+
+<h4> WRITE FAILURES </h4> 
+
+What happens when a write fails or partially succeeds? For example, say you asked for a quorum, but were only able to write to host 2, while hosts 3 and 4 timed out. At this point we take advantage of one of our key assumptions about time series data: writes are always for new data that is keyed off information provided by the client. We return a partial write failure to the client. In the meantime, the write could be replicated in the background by hinted handoff. The client can then either fail, or it can make the request again, which would only overwrite the existing value. But it’s important to note that a failed partial write could end up being taken in and fully replicated.
+
+</blockquote>
+
+We will have a look at this behavior on *ConsistencyLevel.ALL* and *ANY*! 
 
 # 3 Jepsen setup
 
-The C in the CAP theorem denotes the concept of linearizability - which operates on single valued register. 
-Jepsen's linerizability checker, Knossos can work with a model to validate the list of events what just happened. 
-The model I chose is the simple write/read register - I don't need CAS because InfluxDB does not have an atomic CAS operator. 
+The C in the CAP theorem denotes the concept of linearizability - which operates on a single valued register. 
+Jepsen's linerizability checker, Knossos can work with a model to validate the history of operations and their results. 
+The model I chose is the simple write/read register. 
 
-OK...but what is the single register in a timeseries database? 
-
-Well, it's a value of a timeseries at a single point in time! 
+OK...but what is the single register in a timeseries database? It's <b>the value of a field in the timeseries at a single moment in time</b>! 
 
 Let's choose this to be the first nanosecond of all computer time big bang: 1ns epoch time (1970. Jan. 1. midnight + 1ns)! 
 
@@ -283,7 +223,7 @@ Our operations:
                  )
 </code></pre>
 
-As the write consistency model fails writes with timeout exceptions, but that could mean that the write was successful, we actually don't know too much whether the operation succeeded or not, hence we mark it <b>:info</b>. Every other Exception will result in <b>:fail</b>. 
+As it's stated above, when writes fail with timeout exceptions, that could mean that the write was successful. we actually don't know too much whether the operation succeeded or not, hence we mark it <b>:info</b>. Every other Exception will result in <b>:fail</b>. 
 
 
 Reads are the simple query of the value of the <b>answer</b> field from the <b>anwsers</b> measurement in the <b>jepsen</b> database from when time = 1. 
@@ -291,7 +231,7 @@ Reads are the simple query of the value of the <b>answer</b> field from the <b>a
 
 # 4 Results
 
-## 4.1 Shards get replicated no matter the ConsistencyLevel
+## 4.1 Shards get replicated on both ConsistencyLevel.ANY and ALL
 
 Data Nodes are AP, but you can choose to write on different consistency levels on the client side! 
 <pre><code class="java">public enum ConsistencyLevel {
@@ -308,10 +248,10 @@ Data Nodes are AP, but you can choose to write on different consistency levels o
 </code></pre>
 
 
-The interesting part is that this does not mean that the data doesn't get replicated! 
+The interesting part is that this **does not mean that the data won't get replicated**! 
 
 
-I prepared 4 tests with regards to linearizability checking in Jepsen. Out of that 2 is healthy (there is no distruption) and 2 is torn apart by nemesis. Within those 2 categories I have ConsistencyLevel.ALL and ConsistencyLevel.ANY writes. 
+I prepared 4 tests with regards to linearizability checking in Jepsen. Out of that 2 is healthy (there is no distruption) and 2 is torn apart by nemesis. Within those 2 categories I have *ConsistencyLevel.ALL* and *ConsistencyLevel.ANY* writes. 
 
 The result is that the two healthy cluster tests are passing (linearizable) while the nemesis ones fail: 
 
@@ -320,12 +260,13 @@ The result is that the two healthy cluster tests are passing (linearizable) whil
 </code></pre>
 
 
-<i>ConsistencyLevel just means that the client gets informed if the replication of the shards to the specified amount of members doesn't happen in a given time.</i>
+<i>ConsistencyLevel just means that the client gets informed if the replication of the shards to the specified amount of members doesn't happen in a given time, data will be fully replicated to all nodes as soon as it's possible.</i>
 
+(caveat: I only checked for ANY and ALL)
 
 ## 4.2 Partially failing writes during network partitions 
 
-If you choose consistency level ALL, then, based on the original description, your write will fail with timeout on the client side, but it will successfully be written to the local shard. 
+If you choose *ConsistencyLevel.ALL*, then, based on the specs in the AP/CP blogpost, your write will fail with timeout on the client side, but it will successfully be written to the local copy of the shard. 
 
 In order to see the fun effects I had the following setup: 
 
@@ -336,7 +277,7 @@ In order to see the fun effects I had the following setup:
 
 Nemesis was setup to disrupt the network for 3s intervals, and let the system recover 1s. 
 
-The results were consistent with the documentation! 
+**The results were consistent with the documentation!**
 
 
 <img src="{{ site.url }}/images/j02-latency-ALL.png" />
@@ -357,9 +298,11 @@ The results were consistent with the documentation!
 
 An interesting edge case was mentioned by Paul Dix in his original AP/CP blogpost: 
 
-Ideally the shard definitions are in the CP cluster, so even if the write ConsistencyLevel is set to ANY, the write should time out after a while or just fail --- it depends on the timestamp I guess whether it needs a new shard or not.
+As the Metadata cluster is CP, even if the write ConsistencyLevel is set to ANY, the write should time out after a while or just fail <i>if it requires the Metadata service</i> to succeed. 
 
-I had to test this out of curiousity! Let's see what happens! 
+I had to test this out of curiousity! 
+
+How do we force a write operaton to use the Metadata service? <b>We need to make every write create a shard!</b> The Metadata service stores the information about shards, shard groups, etc. so if a point requires the creation of a new shard, the Metadata service will be on the critical path! 
 
 The original single point insertion leaves us with one single shard: 
 
@@ -412,7 +355,25 @@ The timedWrite operation will be handled by our client similarly as the write op
                           )
 </code></pre>
 
-And voila, the shards are created: 
+The "test" I wrote for this is not really a test, as I don't want to put a model around just writing stuff, I don't have a linearizability criteria, I just wanted to see the availability of the product. This could be written in form of a test too -- fail it when there is a timeout or failure, or when the system SLA is failed with regards to latency percentiles...but for this blogpost just running the reports was satisfactory for me. 
+
+<pre><code class="clojure">:generator (->> (gen/mix [wTimed])
+                     (gen/nemesis
+                       (gen/seq
+                         (cycle [(gen/sleep 1)
+                                 {:type :info :f :start}
+                                 (gen/sleep 3)
+                                 {:type :info :f :stop}
+                                 ])
+                         )
+                       )
+                     (gen/time-limit 30))
+     :model model/noop
+</code></pre>
+
+It works with the same nemesis cycle as the previous tests but noop model and the generator is only generating wTimed operations.
+
+After running the test, voila, the shards are created: 
 
 <pre><code class="ssh">> show shards
 name: jepsen
@@ -462,6 +423,8 @@ id  database  retention_policy  shard_group start_time    end_time    expiry_tim
 7 jepsen    default     7   2032-09-27T00:00:00Z  2032-10-04T00:00:00Z  2032-10-04T00:00:00Z  5,1,4
 </code></pre>
 
+And the final analysis: 
+
 This is how latency looks like when everything is healthy: 
 
 <img src="{{ site.url }}/images/j02-latency-multi-healthy.png"/>
@@ -487,12 +450,12 @@ Also the client experiences errors like the following ones:
    :at [java.net.SocketInputStream read SocketInputStream.java 203]}]
 </code></pre>
 
-Which is again, in sync with the documentation: when the actual operation depends on the CP metadataservice (e.g. writing a new datapoint requires a new shard to be created), and there are network partitions in place, the system will seem unavailable, rendering the AP part of the design non-strict. 
+This behaviour is - similarly to the single point write consistency modes - in agreement with the documentation: when the actual operation depends on the CP metadataservice (e.g. writing a new datapoint requires a new shard to be created), and there are network partitions in place, the system will become unavailable, rendering the AP part of the design non-strict. 
 
 # 5. Summary 
 
 
-What I've learned: 
+What we've learned: 
 
 * Jepsen is an excellent tool to construct statistically stable tests for distributed systems and was a big help in automating the different scenarios exploring InfluxDB's behaviour. With a bit of effort distributed system builders could even turn it into a CI tool, to test continuously the assumptions with regards to linearizability scenarios (I wonder why nobody is doing it yet?). 
 
@@ -500,11 +463,9 @@ What I've learned:
 
 * InfluxDB continuously improves and got better in the last month only: more stable startups and less finicky clustering setup (although still has some rough edges when nodes are joining, 1 out of 3 tests fail to connect up all nodes!)
 
-* InfluxDB docs are a bit all over the place (blog, docs) but that's improving as well, and in the end there is an obvious effort to be extremely transparent about the design decisions and trade-offs 
+* InfluxDB docs around safety, or what exactly defines a DataNode or MetaNode for example are a bit all over the place (blog, docs) but that's improving as well, and in the end there is an obvious effort to be extremely transparent about the design decisions and trade-offs 
 
 
+I have to say thank you for Kyle Kingsbury for helping resolving the issues with the setup, he was super helpful and always quick to respond. 
 
-
-
-
-
+Thoughts, feedback, as always, are more than welcome! 
