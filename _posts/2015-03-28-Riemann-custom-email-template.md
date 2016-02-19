@@ -7,8 +7,6 @@ categories: Tech
 tags: [riemann, monitoring, clojure]
 ---
 
-#Riemann is a flexible monitoring/alerting solution
-
 At a client, currently we are facing a very interesting problem: we have a lot of tiny little applications which are all monitoring different parts of different applications. Some of them are written in Java some of them in C#, or maybe even in Python, some of them have very simple logic, some of them are much more complex and obscurely hides it within a couple of stored procedures. As this is a financial firm, it is very important to react in time if certain metrics go into the danger zone, otherwise the underlying problem might have a big financial impact. 
 
 Some of the features these monitoring/reporting/alerting applications have in common: 

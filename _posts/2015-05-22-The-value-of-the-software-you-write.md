@@ -7,17 +7,17 @@ categories: Agile, Craftsmanship
 tags: [agile, business-value]
 ---
 
-##No idea about the value
-
 Most of us developers are payed really well, definitely above average, and in a most of the cases we have a 
 very vague or even absolutely no idea of the value of the software we deliver. 
+
+## No idea about the value
 
 In some cases this value might be big and then the customer’s big investment might pay off. Unfortunately usually we are not building the right things,
 which on the long run results in different forms of ending the engagement; projects are abruptly cut after a couple of years of hard work, 
 consultancy relationships cool off.
 
 
-##Inspired by church quotes
+## Inspired by church quotes
 
 Yesterday (21 May 2015), Wes Higbee gave a thoughtprovoking, very interesting talk on the Software Craftsmanship 
 New York meetup at Thoughtworks with the title <a href="http://www.meetup.com/Software-Craftsmanship-New-York/events/222519068/">*Software as a means, not an end*</a>. 
@@ -27,7 +27,7 @@ He is very much inspired by the quotes on the church wall across the street from
 
 <img src="/images/quote.jpg">
 
-##Woke up
+## Woke up
 
 
 One of the cornerstones of Wes' message is that the regular way of compensation is putting the wrong incentives in place, especially if you 
